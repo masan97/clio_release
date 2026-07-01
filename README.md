@@ -120,5 +120,5 @@ If you use the CLIO package in your research or publications, please cite using 
 
 # Acknowledgments
 We thank Lauri Tuppi for assisting us coding the vertical interpolation routines. We acknowledge ECMWF for providing us with initial files for running OpenIFS, which we also included in CLIO's repository. The authors would also like to thank ECMWF for providing support in running OpenIFS, especially Marcus Köhler and Adrian Hill. Small segments of the source code was generated with GPT-4 and GPT-5 released by OpenAI. We acknowledge
-CSC – IT Centre for Science, Finland, for computational resources. This research is a contribution to the project `Future predictability of hazardous weather in Europe and in the Arctic' funded by the Research Council of Finland (Grant number 370752).
+CSC – IT Centre for Science, Finland, for computational resources. This research is a contribution to the project `Future predictability of hazardous weather in Europe and in the Arctic' funded by the Research Council of Finland (Grant number 364665).
 
