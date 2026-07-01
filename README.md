@@ -1,4 +1,4 @@
-# CLIO (CLimate model Input for OpenIFS)
+# CLIO (CLimate data Input for OpenIFS)
 CLIO rewrites initial condition files for the OpenIFS numerical weather prediction model maintained and developed by ECMWF (https://www.ecmwf.int/en/research/projects/openifs). CLIO is designed to supply meteorological data from CMIP6 models to OpenIFS, thus enabling OpenIFS simulations to be initialised with atmospheric states taken from any climate model (or even any weather or climate model or reanalysis). 
 
 
@@ -35,7 +35,7 @@ Python requirements:
 cd your_local_directory
 git install lfs
 git lfs pull
-git clone git@version.helsinki.fi:dynamic-meteo-common/clio_release.git
+git clone git@github.com:masan97/clio_release.git
 cd clio_release
 git checkout newbranch
 ```
@@ -94,7 +94,7 @@ Namelist inside CLIO_start.py:
 
 
 # Disclaimer
-The CLIO package is developed by Sandor Istvan Maho (sandor.maho@helsinki.fi) and Clement Bouvier (clement.bouvier@helsinki.fi). Further members of the development team: Victoria Siclair and Oskari Rantala (oskari.rantala@helsinki.fi)
+The CLIO package is developed by Sandor Istvan Maho (sandor.maho@helsinki.fi) and Clement Bouvier (clement.bouvier@helsinki.fi). Further members of the development team: Victoria Siclair and Oskari Rantala (oskari.rantala@helsinki.fi).
 
 # Support
 For feedback and issue reporting, feel free to send an email to sandor.maho@helsinki.fi.
@@ -119,6 +119,6 @@ If you use the CLIO package in your research or publications, please cite using 
 </Details>
 
 # Acknowledgments
-We thank Lauri Tuppi for assisting us coding the vertical interpolation routines. We acknowledge ECMWF for providing us initial files for running OpenIFS, which we also included in CLIO's repository. Small segments of the source code was generated with GPT-4 and GPT-5 released by OpenAI. We acknowledge
-CSC – IT Centre for Science, Finland, for computational resources. This research is a contribution to the project `Future predictability of hazardous weather in Europe and in the Arctic' funded by the Research Council of Finland.
+We thank Lauri Tuppi for assisting us coding the vertical interpolation routines. We acknowledge ECMWF for providing us with initial files for running OpenIFS, which we also included in CLIO's repository. The authors would also like to thank ECMWF for providing support in running OpenIFS, especially Marcus Köhler and Adrian Hill. Small segments of the source code was generated with GPT-4 and GPT-5 released by OpenAI. We acknowledge
+CSC – IT Centre for Science, Finland, for computational resources. This research is a contribution to the project `Future predictability of hazardous weather in Europe and in the Arctic' funded by the Research Council of Finland (Grant number 370752).
 
