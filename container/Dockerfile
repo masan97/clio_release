@@ -3,6 +3,7 @@ FROM python:3.12-bookworm
 
 # For installation
 ARG HDF5_VERSION="1.14.6"
+ARG FFTW_VERSION="3.3.11"
 ARG NETCDF_C_VERSION="4.9.3"
 ARG NETCDF_FORTRAN_VERSION="4.6.2"
 ARG ECCODES_VERSION="2.41.0"
@@ -10,6 +11,7 @@ ARG CDO_VERSION="2.4.3"
 ARG METVIEW_VERSION="2024.4.0"
 
 ARG HDF5_DIR=/usr/local/hdf5
+ARG FFTW_DIR=/usr/local/fftw3
 ARG NETCDF_C_DIR=/usr/local/netcdf-c
 ARG NETCDF_FORTRAN_DIR=/usr/local/netcdf-fortran
 ARG ECCODES_DIR=/usr/local/eccodes
@@ -18,6 +20,7 @@ ARG METVIEW_DIR=/usr/local/metview
 
 # For runtimes
 ENV LD_LIBRARY_PATH=${HDF5_DIR}/lib
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${FFTW_DIR}/lib
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${NETCDF_C_DIR}/lib
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${NETCDF_FORTRAN_DIR}/lib
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${ECCODES_DIR}/lib
@@ -35,7 +38,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata &
     build-essential \
     tar nano \
     bzip2 \
-    m4 \
+    m4 libfftw3-dev \
     cmake libaec-dev \
     zlib1g-dev \
     gfortran \
@@ -57,6 +60,14 @@ RUN cd /tmp && \
     ./configure --enable-fortran --prefix=${HDF5_DIR} && \
     make -j4 && make install && \
     for f in ${HDF5_DIR}/bin/* ; do ln -s $f /usr/local/bin ; done
+
+# Build FFTW3
+RUN cd /tmp && \
+    tar xzvf fftw-${FFTW_VERSION}.tar.gz && \
+    cd fftw-${FFTW_VERSION} && \
+    ./configure --prefix=${FFTW_DIR} && \
+    make -j4 && make install && \
+    for f in ${FFTW_DIR}/bin/* ; do ln -s $f /usr/local/bin ; done
 
 # Build netcdf-c
 RUN cd /tmp && \
@@ -91,8 +102,8 @@ RUN cd /tmp && \
     cd cdo-${CDO_VERSION} && \
     export CXXFLAGS=-std=c++20 CFLAGS=-std=gnu++20 && \
     ./configure --with-eccodes=${ECCODES_DIR} --with-netcdf=${NETCDF_C_DIR} \
-                --with-hdf5=${HDF5_DIR} --enable-netcdf4 --enable-hdf5 \
-                --prefix=${CDO_DIR} && \
+                --with-hdf5=${HDF5_DIR} --with-fftw3=${FFTW_DIR} --enable-netcdf4 \
+                --enable-fftw3 --enable-hdf5 --prefix=${CDO_DIR} && \
     make -j4 && make install && \
     for f in ${CDO_DIR}/bin/* ; do ln -s $f /usr/local/bin ; done
 
