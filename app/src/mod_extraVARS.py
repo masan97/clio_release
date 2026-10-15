@@ -81,7 +81,6 @@ def fix_time_name_ERA5(ds):
 
 '''-----------------------------------import OIFS input data---------------------------------------'''
 
-
 subprocess.run(['bash', essential_scripts_ICMGG[5], expname, IFS_path, in_HPC])
 
 
@@ -202,8 +201,13 @@ for var in cmip_var_names_ICMGG:
         sel_date = type(time0)(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
     slice_rg[var] = dsets_CMIP_suf[var][var].sel(time=sel_date, method='nearest')
+
+    if grid_type not in ['TCo319','TCo639','TCo1279']:
    
-    slice_rg_rn[var]=slice_rg[var].rename({'lat': 'latitude','lon': 'longitude'})
+        slice_rg_rn[var]=slice_rg[var].rename({'lat': 'latitude','lon': 'longitude'})
+    
+    else:
+        slice_rg_rn[var]=slice_rg[var]
 
     sel_date=date_yr+"-"+date_mo+"-"+date_dd+"T"+date_hr+":00:00"
 
@@ -290,7 +294,7 @@ else:
         
     else:
         fname_sea_ice = f"{workdir}temp_siconc.nc"
-        ds_ice = xr.open_dataset(f"{essential_files[8]}")
+        ds_ice = xr.open_dataset(f"{essential_files[11]}")
         
         
         
@@ -369,7 +373,7 @@ else:
     #ALBEDO
     
     fname_al = f"{workdir}temp_al.nc"
-    ds_al = xr.open_dataset(f"{essential_files[16]}")
+    ds_al = xr.open_dataset(f"{essential_files[19]}")
     
     
     #time array used for selecting dates (i.e. there might be data from 2 months, not just one)
@@ -412,7 +416,7 @@ else:
     
     #LAI_LV & LAI_HV
     fnames_lai = [f"{workdir}temp_lai_lv.nc",f"{workdir}temp_lai_hv.nc"]
-    ds_lai = xr.open_dataset(f"{essential_files[15]}")
+    ds_lai = xr.open_dataset(f"{essential_files[18]}")
     
     ds_ERA5_lai= {}
     ds_ERA5_interp={}
@@ -569,7 +573,7 @@ else:
         print("ERA5 30-yr mean siconc is used")
         
         fname_sea_ice = f"{workdir}temp_siconc.nc"
-        ds_ice = xr.open_dataset(f"{essential_files[8]}")
+        ds_ice = xr.open_dataset(f"{essential_files[11]}")
         
         ds_ERA5_siconc = ds_ice['siconc'].sel(valid_time=ds_ice.valid_time.dt.month == int(date_mo)).squeeze()
             
@@ -631,7 +635,7 @@ else:
             print("ERA5 30-yr mean istl1-4 are used")
             
             
-            ds_ice = xr.open_dataset(f"{essential_files[8]}")
+            ds_ice = xr.open_dataset(f"{essential_files[11]}")
             era5_T_seaice=['istl1','istl2','istl3','istl4']
             
             era5_seaice_fnames = [f"{workdir}temp_{era5_T_seaice[0]}.nc",
@@ -668,7 +672,7 @@ else:
         print("ERA5 30-yr mean istl1-4 are used")
             
             
-        ds_ice = xr.open_dataset(f"{essential_files[8]}")
+        ds_ice = xr.open_dataset(f"{essential_files[11]}")
         era5_T_seaice=['istl1','istl2','istl3','istl4']
             
         era5_seaice_fnames = [f"{workdir}temp_{era5_T_seaice[0]}.nc",
@@ -772,7 +776,7 @@ else:
                       f"{workdir}temp_stl3.nc",
                       f"{workdir}temp_stl4.nc"]
         
-        ds_soil = xr.open_dataset(f"{essential_files[9]}")
+        ds_soil = xr.open_dataset(f"{essential_files[12]}")
         
         
         ds_ERA5_clim = {}
@@ -874,7 +878,7 @@ else:
                       f"{workdir}temp_swvl3.nc",
                       f"{workdir}temp_swvl4.nc"]
         
-        ds_soil = xr.open_dataset(f"{essential_files[10]}")
+        ds_soil = xr.open_dataset(f"{essential_files[13]}")
         
         
         ds_ERA5_clim = {}
@@ -942,7 +946,7 @@ else:
         print("ERA5 30-yr mean sd is used")
         
         fname_snow = f"{workdir}temp_sd.nc"
-        ds_snow = xr.open_dataset(f"{essential_files[11]}")
+        ds_snow = xr.open_dataset(f"{essential_files[14]}")
         
         ds_ERA5_snow = ds_snow['sd'].sel(valid_time=ds_snow.valid_time.dt.month == int(date_mo)).squeeze()
             
@@ -997,7 +1001,7 @@ else:
             print("ERA5 30-yr mean tsn is used")
             
             fname_snow = f"{workdir}temp_tsn.nc"
-            ds_snow = xr.open_dataset(f"{essential_files[11]}")
+            ds_snow = xr.open_dataset(f"{essential_files[14]}")
             
             ds_ERA5_snow = ds_snow['tsn'].sel(valid_time=ds_snow.valid_time.dt.month == int(date_mo)).squeeze()
                 
@@ -1035,7 +1039,7 @@ else:
     
     print("ERA5 30-yr mean rsn and asn are used")
     
-    ds_snow = xr.open_dataset(f"{essential_files[11]}")
+    ds_snow = xr.open_dataset(f"{essential_files[14]}")
     
     
     ds_ERA5_clim = {}
@@ -1153,7 +1157,7 @@ else:
         print("ERA5 30-yr mean skin temp is used")
         
         fname_era = f"{workdir}temp_skt.nc"
-        ds_era = xr.open_dataset(f"{essential_files[14]}")
+        ds_era = xr.open_dataset(f"{essential_files[17]}")
         
         ds_ERA5_extra = ds_era['skt'].sel(valid_time=ds_era.valid_time.dt.month == int(date_mo)).squeeze()
             
@@ -1225,7 +1229,7 @@ else:
                         f"{workdir}temp_{era5_lake[6]}.nc"]
     
     
-    ds_lake = xr.open_dataset(f"{essential_files[7]}")
+    ds_lake = xr.open_dataset(f"{essential_files[10]}")
    
     
     ds_ERA5_clim = {}
@@ -1249,7 +1253,7 @@ else:
     
     #CHARNOCK
     fname_era = f"{workdir}temp_chnk.nc"
-    ds_era = xr.open_dataset(f"{essential_files[12]}")
+    ds_era = xr.open_dataset(f"{essential_files[15]}")
     
     ds_ERA5_extra = ds_era['chnk'].sel(valid_time=ds_era.valid_time.dt.month == int(date_mo)).squeeze()
         
@@ -1266,7 +1270,7 @@ else:
     
     #SRC
     fname_era = f"{workdir}temp_src.nc"
-    ds_era = xr.open_dataset(f"{essential_files[13]}")
+    ds_era = xr.open_dataset(f"{essential_files[16]}")
     
     ds_ERA5_extra = ds_era['src'].sel(valid_time=ds_era.valid_time.dt.month == int(date_mo)).squeeze()
         
@@ -1282,7 +1286,7 @@ else:
     
     
     #LAI_HV and LAI_LV (leaf area index, high veg, low veg)
-    ds_lai= xr.open_dataset(f"{essential_files[15]}")
+    ds_lai= xr.open_dataset(f"{essential_files[18]}")
     
     era5_lai_fnames = [f"{workdir}temp_lai_lv.nc",f"{workdir}temp_lai_hv.nc"]
     
@@ -1304,7 +1308,7 @@ else:
     
     #ALBEDO
     fname_era = f"{workdir}temp_fal.nc"
-    ds_era = xr.open_dataset(f"{essential_files[16]}")
+    ds_era = xr.open_dataset(f"{essential_files[19]}")
     
     
     ds_ERA5_extra = (ds_era.sel(valid_time=ds_era.valid_time.dt.month == int(date_mo)).rename({'fal': 'al'})['al'].squeeze())

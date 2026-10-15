@@ -25,6 +25,46 @@ case "$grid_type" in
   TL399)
     target_grid="N200"
     ;;
+  TCo1279)
+
+    if [ "$in_HPC" == "false" ]; then
+
+      export CLEAN_ENV="env -i PATH=$PATH"
+      $CLEAN_ENV cdo griddes temp_stl1_GG.nc >temp_TCo_grid.txt
+    
+    else
+
+      cdo griddes temp_stl1_GG.nc >temp_TCo_grid.txt
+    fi
+
+    target_grid=temp_TCo_grid.txt
+    ;;
+  TCo319)
+    if [ "$in_HPC" == "false" ]; then
+
+      export CLEAN_ENV="env -i PATH=$PATH"
+      $CLEAN_ENV cdo griddes temp_stl1_GG.nc >temp_TCo_grid.txt
+    
+    else
+
+      cdo griddes temp_stl1_GG.nc >temp_TCo_grid.txt
+    fi
+
+    target_grid=temp_TCo_grid.txt
+    ;;
+  TCo639)
+    if [ "$in_HPC" == "false" ]; then
+
+      export CLEAN_ENV="env -i PATH=$PATH"
+      $CLEAN_ENV cdo griddes temp_stl1_GG.nc >temp_TCo_grid.txt
+    
+    else
+
+      cdo griddes temp_stl1_GG.nc >temp_TCo_grid.txt
+    fi
+
+    target_grid=temp_TCo_grid.txt
+    ;;
   *)
     echo "Error: Unsupported grid type '$grid_type'."
     exit 1
@@ -36,10 +76,10 @@ esac
 if [ "$in_HPC" == "false" ]; then
 
    export CLEAN_ENV="env -i PATH=$PATH"
-   $CLEAN_ENV cdo remapnn,"$target_grid" "$input_file" "$output_file"
+   $CLEAN_ENV cdo remapbil,"$target_grid" "$input_file" "$output_file"
 
 else
-   cdo remapnn,"$target_grid" "$input_file" "$output_file"
+   cdo remapbil,"$target_grid" "$input_file" "$output_file"
    
 fi
 

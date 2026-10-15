@@ -26,6 +26,46 @@ case "$grid_type" in
   TL399)
     target_grid="N200"
     ;;
+  TCo1279)
+
+   if [ "$in_HPC" == "false" ]; then
+
+      export CLEAN_ENV="env -i PATH=$PATH"
+      $CLEAN_ENV cdo griddes temp_lnsp_GG.nc >temp_SH_TCo_grid.txt
+    
+    else
+
+      cdo griddes temp_lnsp_GG.nc >temp_SH_TCo_grid.txt
+    fi
+
+    target_grid=temp_SH_TCo_grid.txt
+    ;;
+  TCo319)
+    if [ "$in_HPC" == "false" ]; then
+
+      export CLEAN_ENV="env -i PATH=$PATH"
+      $CLEAN_ENV cdo griddes temp_lnsp_GG.nc >temp_SH_TCo_grid.txt
+    
+    else
+
+      cdo griddes temp_lnsp_GG.nc >temp_SH_TCo_grid.txt
+    fi
+
+    target_grid=temp_SH_TCo_grid.txt
+    ;;
+  TCo639)
+    if [ "$in_HPC" == "false" ]; then
+
+      export CLEAN_ENV="env -i PATH=$PATH"
+      $CLEAN_ENV cdo griddes temp_lnsp_GG.nc >temp_SH_TCo_grid.txt
+    
+    else
+
+      cdo griddes temp_lnsp_GG.nc >temp_SH_TCo_grid.txt
+    fi
+
+    target_grid=temp_SH_TCo_grid.txt
+    ;;
   *)
     echo "Error: Unsupported grid type '$grid_type'."
     exit 1
@@ -33,18 +73,17 @@ case "$grid_type" in
 esac
 
 
-
 if [ "$in_HPC" == "false" ]; then
 
    export CLEAN_ENV="env -i PATH=$PATH"
    #export CLEAN_ENV="env -i PATH=/usr/bin:/bin:/usr/local/bin:/usr/sbin:/usr/local/sbin"
    $CLEAN_ENV cdo seldate,"$seldate" "$input_file" tmp_seldate.nc
-   $CLEAN_ENV cdo remapnn,"$target_grid" tmp_seldate.nc "$output_file"
+   $CLEAN_ENV cdo remapbil,"$target_grid" tmp_seldate.nc "$output_file"
    rm tmp_seldate.nc
 
 else
    cdo seldate,"$seldate" "$input_file" tmp_seldate.nc
-   cdo remapnn,"$target_grid" tmp_seldate.nc "$output_file"
+   cdo remapbil,"$target_grid" tmp_seldate.nc "$output_file"
    rm tmp_seldate.nc
 fi
 

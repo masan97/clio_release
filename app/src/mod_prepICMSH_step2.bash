@@ -4,26 +4,53 @@ set -x
 
 workdir="$1"
 in_HPC="$2"
+in_TCO="$3"
 
-if [ "$in_HPC" == "false" ]; then
-   export CLEAN_ENV="env -i PATH=$PATH"
 
-   $CLEAN_ENV cdo merge "${workdir}temp_ua_chname.nc" "${workdir}temp_va_chname.nc" "${workdir}temp_uv_chname.nc"
-   $CLEAN_ENV cdo uv2dv,linear "${workdir}temp_uv_chname.nc" "${workdir}temp_dv_renamed_SP.nc"
+if [ "$in_TCO" == "false" ]; then
 
-   $CLEAN_ENV cdo selcode,138 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_vor_renamed_SP.nc"
-   $CLEAN_ENV cdo selcode,155 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_div_renamed_SP.nc"
+   if [ "$in_HPC" == "false" ]; then
+      export CLEAN_ENV="env -i PATH=$PATH"
 
-else
+      $CLEAN_ENV cdo merge "${workdir}temp_ua_chname.nc" "${workdir}temp_va_chname.nc" "${workdir}temp_uv_chname.nc"
+      $CLEAN_ENV cdo uv2dv,linear "${workdir}temp_uv_chname.nc" "${workdir}temp_dv_renamed_SP.nc"
 
-   cdo -L merge "${workdir}temp_ua_chname.nc" "${workdir}temp_va_chname.nc" "${workdir}temp_uv_chname.nc"
-   cdo -L uv2dv,linear "${workdir}temp_uv_chname.nc" "${workdir}temp_dv_renamed_SP.nc"
+      $CLEAN_ENV cdo selcode,138 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_vor_renamed_SP.nc"
+      $CLEAN_ENV cdo selcode,155 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_div_renamed_SP.nc"
 
-   cdo -L selcode,138 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_vor_renamed_SP.nc"
-   cdo -L selcode,155 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_div_renamed_SP.nc"
+   else
 
+      cdo -L merge "${workdir}temp_ua_chname.nc" "${workdir}temp_va_chname.nc" "${workdir}temp_uv_chname.nc"
+      cdo -L uv2dv,linear "${workdir}temp_uv_chname.nc" "${workdir}temp_dv_renamed_SP.nc"
+
+      cdo -L selcode,138 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_vor_renamed_SP.nc"
+      cdo -L selcode,155 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_div_renamed_SP.nc"
+
+   fi
 fi
 
+if [ "$in_TCO" == "true" ]; then
+
+   if [ "$in_HPC" == "false" ]; then
+      export CLEAN_ENV="env -i PATH=$PATH"
+
+      $CLEAN_ENV cdo merge "${workdir}temp_ua_chname.nc" "${workdir}temp_va_chname.nc" "${workdir}temp_uv_chname.nc"
+      $CLEAN_ENV cdo uv2dv,cubic "${workdir}temp_uv_chname.nc" "${workdir}temp_dv_renamed_SP.nc"
+
+      $CLEAN_ENV cdo selcode,138 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_vor_renamed_SP.nc"
+      $CLEAN_ENV cdo selcode,155 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_div_renamed_SP.nc"
+
+   else
+
+      cdo -L merge "${workdir}temp_ua_chname.nc" "${workdir}temp_va_chname.nc" "${workdir}temp_uv_chname.nc"
+      cdo -L uv2dv,cubic "${workdir}temp_uv_chname.nc" "${workdir}temp_dv_renamed_SP.nc"
+
+      cdo -L selcode,138 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_vor_renamed_SP.nc"
+      cdo -L selcode,155 "${workdir}temp_dv_renamed_SP.nc" "${workdir}temp_div_renamed_SP.nc"
+
+   fi
+
+fi
 
 
 rm -f ${workdir}temp_uv_chname.nc

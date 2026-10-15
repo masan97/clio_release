@@ -87,8 +87,6 @@ globals().update(config)
 
 
 
-
-
 essential_scripts=[workdir+"src/mod_inputOIFS_prepare.bash",
                    workdir+"src/mod_horInterp.bash",
                    workdir+"src/mod_prepICMSH_step1.bash",
@@ -101,6 +99,7 @@ essential_scripts=[workdir+"src/mod_inputOIFS_prepare.bash",
                    workdir+'src/mod_prepICMCL.bash',
                    workdir+'src/mod_prepERA5-clim.bash',
                    workdir+'src/mod_horInterp_2d.bash',
+                   workdir+"src/mod_prepICMSH_step1-TCO.bash",
                    workdir+"src/mod_simple_plots.py",
                    workdir+"src/mod_outputOIFS.py",
                    workdir+"src/mod_mainVARS.py",
@@ -115,6 +114,9 @@ essential_files=[workdir+"aux/L91_model_levels.txt",
                  workdir+"aux/lnsp_1981-2010_0UTC_ymonmean_F200_SP.nc",
                  workdir+"aux/lnsp_1981-2010_0UTC_ymonmean_F128_SP.nc",
                  workdir+"aux/lnsp_1981-2010_0UTC_ymonmean_F80_SP.nc",
+                 workdir+"aux/lnsp_1981-2010_0UTC_ymonmean_TCO319_SP.nc",
+                 workdir+"aux/lnsp_1981-2010_0UTC_ymonmean_TCO639_SP.nc",
+                 workdir+"aux/lnsp_1981-2010_0UTC_ymonmean_TCO1279_SP.nc",
                  workdir+"aux/lake_1981-2010_ymonmean_ERA5.nc",
                  workdir+"aux/sea_ice_1981-2010_ymonmean_ERA5.nc",
                  workdir+"aux/stl_1981-2010_ymonmean_ERA5.nc",
@@ -125,6 +127,8 @@ essential_files=[workdir+"aux/L91_model_levels.txt",
                  workdir+"aux/skt_1981-2010_ymonmean_ERA5.nc",
                  workdir+"aux/veg_1981-2010_ymonmean_ERA5.nc",
                  workdir+"aux/alb_1981-2010_ymonmean_ERA5.nc"]
+
+
 
 for item in essential_scripts:
     os.chmod(item, 0o755)

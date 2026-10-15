@@ -495,7 +495,11 @@ if check_interpolation:
         lon_dim = [d for d in ds_tint.dims if "lon" in d.lower()][0]
         slice_CMIPint_to_comp=ds_tint.hus.mean(dim=lon_dim)
     else:
-        slice_CMIPint_to_comp=slice_rg['hus'].hus.mean(dim="lon")
+        ds_tint = slice_rg['hus']
+        lon_dim = [d for d in ds_tint.dims if "lon" in d.lower()][0]
+        slice_CMIPint_to_comp=ds_tint.hus.mean(dim=lon_dim)
+    
+    
     
     
     savepath=f"{workdir}plots/comp_hus.png"

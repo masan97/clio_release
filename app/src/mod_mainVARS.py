@@ -46,7 +46,7 @@ lnsp_wavenumber = 36 #CMIP6 lnsp update wavenumber limit
 
 compare_sp_plots = True  #enable plotting for sanity check
 
-check_interpolation = True #enable plotting for sanity check
+check_interpolation = True #enable plotting for sanity check, not supported for TCO
 
 
 """ +++++++++++++++++++++++++++++++++++++++++++++++ """
@@ -87,6 +87,12 @@ elif grid_type == 'TL1279':
     N_sp=1279
 elif grid_type == 'TL399':
     N_sp=399
+elif grid_type == 'TCo319':
+    N_sp=319
+elif grid_type == 'TCo639':
+    N_sp=639
+elif grid_type == 'TCo1279':
+    N_sp=1279
 else:
     print(f"Error: Unsupported grid type {grid_type}.")
     sys.exit(1)
@@ -108,10 +114,12 @@ def fix_time_name_ERA5(ds):
 
 
 
+if grid_type in ['TCo319','TCo639','TCo1279']:
+    in_TCO='true'
+else:
+    in_TCO='false'
 
-
-subprocess.run(['bash', essential_scripts_ICMSH[0], expname, IFS_path, in_HPC])
-
+subprocess.run(['bash', essential_scripts_ICMSH[0], expname, IFS_path, in_HPC, in_TCO])
 
 
 '''-----------------------------------import OIFS input data---------------------------------------'''
@@ -145,8 +153,6 @@ elif len(slice_u.level.values)==137:
 else:
     print(f"Error: Unsupported number of levels {len(slice_u.level.values)}")
     sys.exit(1)  
-
-
 
 
 
@@ -204,7 +210,7 @@ for var in cmip_var_names_ICMSH:
     if 'plev' in slice_rg[var].dims:
        slice_rg[var]=slice_rg[var].rename({'plev': 'lev'})
     if 'level' in slice_rg[var].dims:
-       slice_rg[var]=slice_rg[var].rename({'plev': 'lev'})
+       slice_rg[var]=slice_rg[var].rename({'level': 'lev'})
     if 'z' in slice_rg[var].dims:
        slice_rg[var]=slice_rg[var].rename({'plev': 'lev'})
     
@@ -218,7 +224,6 @@ spl.general_surface_plot(slice_rg['ps'],c_levs=32,varname='surface pressure')
 
 spl.cartopy_surface_plot(slice_rg['ps'],c_levs=32,varname='surface pressure',unit='Pascals')
 """
-
 
 
 '''-----------------------------------save interpolated CMIP6 netcdf data---------------------------------------'''
@@ -399,13 +404,14 @@ if check_interpolation:
     
     
     slice_IFS_to_comp = dsets_IFS_dry["ds_t"].t.isel(time=0).mean(dim="longitude")  # adjust dimension names as needed
-    if if_CMIP_in_IFS_model_level==False:
-        ds_tint = xr.open_dataset(workdir+"temp_ta_vertint_seldate.nc")
-        lon_dim = [d for d in ds_tint.dims if "lon" in d.lower()][0]
-        slice_CMIPint_to_comp=ds_tint.ta.mean(dim=lon_dim)
+
+    if if_CMIP_in_IFS_model_level == False:
+        ds_tint = xr.open_dataset(workdir + "temp_ta_vertint_seldate.nc")
     else:
-        ds_tint = xr.open_dataset(workdir+"temp_ta_seldate.nc")
-        slice_CMIPint_to_comp=ds_tint.ta.mean(dim="lon") 
+        ds_tint = xr.open_dataset(workdir + "temp_ta_seldate.nc")
+
+    lon_dim = next(d for d in ds_tint.dims if d.lower() in ("lon", "longitude"))
+    slice_CMIPint_to_comp = ds_tint.ta.mean(dim=lon_dim)
     
     
     savepath=f"{workdir}plots/compT.png"
@@ -428,14 +434,13 @@ if check_interpolation:
         
     
     slice_IFS_to_comp = dsets_IFS_dry["ds_u"].u.isel(time=0).mean(dim="longitude")  # adjust dimension names as needed
-    if if_CMIP_in_IFS_model_level==False:
-        ds_tint = xr.open_dataset(workdir+"temp_ua_vertint_seldate.nc")
-        lon_dim = [d for d in ds_tint.dims if "lon" in d.lower()][0]
-        slice_CMIPint_to_comp=ds_tint.ua.mean(dim=lon_dim) 
+    if if_CMIP_in_IFS_model_level == False:
+        ds_tint = xr.open_dataset(workdir + "temp_ua_vertint_seldate.nc")
     else:
-        ds_tint = xr.open_dataset(workdir+"temp_ua_seldate.nc")
-        slice_CMIPint_to_comp=ds_tint.ua.mean(dim="lon") 
-    
+        ds_tint = xr.open_dataset(workdir + "temp_ua_seldate.nc")
+
+    lon_dim = next(d for d in ds_tint.dims if d.lower() in ("lon", "longitude"))
+    slice_CMIPint_to_comp = ds_tint.ua.mean(dim=lon_dim)
     
     savepath=f"{workdir}plots/compU.png"
     
@@ -453,13 +458,13 @@ if check_interpolation:
     
     savepath=f"{workdir}plots/compV.png"
     slice_IFS_to_comp = dsets_IFS_dry["ds_v"].v.isel(time=0).mean(dim="longitude")  # adjust dimension names as needed
-    if if_CMIP_in_IFS_model_level==False:
-        ds_tint = xr.open_dataset(workdir+"temp_va_vertint_seldate.nc")
-        lon_dim = [d for d in ds_tint.dims if "lon" in d.lower()][0]
-        slice_CMIPint_to_comp=ds_tint.va.mean(dim=lon_dim) 
+    if if_CMIP_in_IFS_model_level == False:
+        ds_tint = xr.open_dataset(workdir + "temp_va_vertint_seldate.nc")
     else:
-        ds_tint = xr.open_dataset(workdir+"temp_va_seldate.nc")
-        slice_CMIPint_to_comp=ds_tint.va.mean(dim="lon")
+        ds_tint = xr.open_dataset(workdir + "temp_va_seldate.nc")
+
+    lon_dim = next(d for d in ds_tint.dims if d.lower() in ("lon", "longitude"))
+    slice_CMIPint_to_comp = ds_tint.va.mean(dim=lon_dim)
     
     
     if if_CMIP_in_IFS_model_level==False:
@@ -483,15 +488,25 @@ paramID_names=['152',
                '132']
 
 
+if grid_type in ['TCo319','TCo639','TCo1279']:
 
-for var, ParamID in zip(cmip_var_names_ICMSH, paramID_names):
-    if if_CMIP_in_IFS_model_level==False:
-        subprocess.run(['bash', essential_scripts_ICMSH[2], var, ParamID, workdir,"False", in_HPC], check=True)
-    else:
-        subprocess.run(['bash', essential_scripts_ICMSH[2], var, ParamID, workdir,"True", in_HPC], check=True)
-    
+    for var, ParamID in zip(cmip_var_names_ICMSH, paramID_names):
+        if if_CMIP_in_IFS_model_level==False:
+            subprocess.run(['bash', essential_scripts_ICMSH[12], var, ParamID, workdir,"False", in_HPC], check=True)
+        else:
+            subprocess.run(['bash', essential_scripts_ICMSH[12], var, ParamID, workdir,"True", in_HPC], check=True)
 
-subprocess.run(['bash', essential_scripts_ICMSH[3], workdir, in_HPC], check=True)
+else:
+
+    for var, ParamID in zip(cmip_var_names_ICMSH, paramID_names):
+        if if_CMIP_in_IFS_model_level==False:
+            subprocess.run(['bash', essential_scripts_ICMSH[2], var, ParamID, workdir,"False", in_HPC], check=True)
+        else:
+            subprocess.run(['bash', essential_scripts_ICMSH[2], var, ParamID, workdir,"True", in_HPC], check=True)
+
+
+
+subprocess.run(['bash', essential_scripts_ICMSH[3], workdir, in_HPC, in_TCO], check=True)
 
 
 subprocess.run(['bash', essential_scripts_ICMSH[4], workdir, in_HPC], check=True)
@@ -532,7 +547,18 @@ if sp_filter_ON:
     elif grid_type == 'TL399':
          
         ps_mod=spf.apply_add_coeffs("temp_ps_renamed_SP.grib",f"aux/lnsp_1981-2010_0UTC_ymonmean_F200_SP.nc",'lnsp',N_sp,lnsp_wavenumber,compare_sp_plots,workdir,date_mo)
-        
+
+    elif grid_type == 'TCo319':
+
+        ps_mod=spf.apply_add_coeffs("temp_ps_renamed_SP.grib",f"aux/lnsp_1981-2010_0UTC_ymonmean_TCO319_SP.nc",'lnsp',N_sp,lnsp_wavenumber,compare_sp_plots,workdir,date_mo)
+
+    elif grid_type == 'TCo639':
+
+        ps_mod=spf.apply_add_coeffs("temp_ps_renamed_SP.grib",f"aux/lnsp_1981-2010_0UTC_ymonmean_TCO639_SP.nc",'lnsp',N_sp,lnsp_wavenumber,compare_sp_plots,workdir,date_mo)
+
+    elif grid_type == 'TCo1279':
+
+        ps_mod=spf.apply_add_coeffs("temp_ps_renamed_SP.grib",f"aux/lnsp_1981-2010_0UTC_ymonmean_TCO1279_SP.nc",'lnsp',N_sp,lnsp_wavenumber,compare_sp_plots,workdir,date_mo)            
         
     else:
         

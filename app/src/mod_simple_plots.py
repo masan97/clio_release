@@ -479,104 +479,200 @@ def compare_wind_vertical(arr1,arr2,varname='var1',dset_name1='dset1',dset_name2
 
 
 
-def compare_cartopy_surface(arr1,arr2,varname='var1',dset_name1='dset1',dset_name2='dset2',c_levs=32,save_plot=""):
+def compare_cartopy_surface(arr1,arr2,varname='var1',dset_name1='dset1',dset_name2='dset2',c_levs=32,TCO=False,save_plot=""):
     
+    if TCO==False:
     
-    lat_name1 = None
-    lon_name1 = None
+        lat_name1 = None
+        lon_name1 = None
 
-    for possible_lat in ['latitude', 'lat']:
-        if possible_lat in arr1.coords:
-            lat_name1 = possible_lat
-            break
+        for possible_lat in ['latitude', 'lat']:
+            if possible_lat in arr1.coords:
+                lat_name1 = possible_lat
+                break
 
 
-    for possible_lon in ['longitude', 'lon']:
-        if possible_lon in arr1.coords:
-            lon_name1 = possible_lon
-            break
+        for possible_lon in ['longitude', 'lon']:
+            if possible_lon in arr1.coords:
+                lon_name1 = possible_lon
+                break
 
-    if lat_name1 is None or lon_name1 is None:
-        raise ValueError("Could not find valid latitude or level coordinates in DataArray.")
+        if lat_name1 is None or lon_name1 is None:
+            raise ValueError("Could not find valid latitude or level coordinates in DataArray.")
+            
         
-     
-    lat_name2 = None
-    lon_name2 = None
+        lat_name2 = None
+        lon_name2 = None
 
-    for possible_lat in ['latitude', 'lat']:
-        if possible_lat in arr2.coords:
-            lat_name2 = possible_lat
-            break
+        for possible_lat in ['latitude', 'lat']:
+            if possible_lat in arr2.coords:
+                lat_name2 = possible_lat
+                break
 
 
-    for possible_lon in ['longitude', 'lon']:
-        if possible_lon in arr2.coords:
-            lon_name2 = possible_lon
-            break
+        for possible_lon in ['longitude', 'lon']:
+            if possible_lon in arr2.coords:
+                lon_name2 = possible_lon
+                break
 
-    if lat_name2 is None or lon_name2 is None:
-        raise ValueError("Could not find valid latitude or level coordinates in DataArray.")
-    
+        if lat_name2 is None or lon_name2 is None:
+            raise ValueError("Could not find valid latitude or level coordinates in DataArray.")
+        
 
-    fig, ax = plt.subplots(1, 2, figsize=(11, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+        fig, ax = plt.subplots(1, 2, figsize=(11, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
-    #plt.subplots_adjust(left=0.2,right=0.5,bottom=0.4,top=0.5)
-    
-    lon = arr1[lon_name1].values.astype(np.float64)
-    
-    data = arr1.values
-    
-    vmin = np.nanmin(data)
-    vmax = np.nanmax(data)
-    levs = np.linspace(vmin, vmax, c_levs)
-    
+        #plt.subplots_adjust(left=0.2,right=0.5,bottom=0.4,top=0.5)
+        
+        lon = arr1[lon_name1].values.astype(np.float64)
+        
+        data = arr1.values
+        
+        vmin = np.nanmin(data)
+        vmax = np.nanmax(data)
+        levs = np.linspace(vmin, vmax, c_levs)
+        
 
-    
-    
-    # Filled contour plot
-    cf = ax[0].contourf(lon, arr1[lat_name1], data, levels=levs, cmap='coolwarm', transform=ccrs.PlateCarree())
-    
-    # Add features
-    ax[0].coastlines()
-    #ax.add_feature(cfeature.BORDERS, linewidth=0.5)
-    ax[0].gridlines(draw_labels=True)
-    ax[0].set_title(f"{varname} in {dset_name1}")
-    
-    # Add colorbar and labels
-    cb = plt.colorbar(cf, orientation='horizontal', pad=0.05, aspect=50)
-    
-    
-    
-    lon = arr2[lon_name2].values.astype(np.float64)
-    
-    data = arr2.values
-    
-    vmin = np.nanmin(data)
-    vmax = np.nanmax(data)
-    levs = np.linspace(vmin, vmax, c_levs)
-    
-    
-    
+        
+        
+        # Filled contour plot
+        cf = ax[0].contourf(lon, arr1[lat_name1], data, levels=levs, cmap='coolwarm', transform=ccrs.PlateCarree())
+        
+        # Add features
+        ax[0].coastlines()
+        #ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+        ax[0].gridlines(draw_labels=True)
+        ax[0].set_title(f"{varname} in {dset_name1}")
+        
+        # Add colorbar and labels
+        cb = plt.colorbar(cf, orientation='horizontal', pad=0.05, aspect=50)
+        
+        
+        
+        lon = arr2[lon_name2].values.astype(np.float64)
+        
+        data = arr2.values
+        
+        vmin = np.nanmin(data)
+        vmax = np.nanmax(data)
+        levs = np.linspace(vmin, vmax, c_levs)
+        
+        
+        
 
-    
-    # Filled contour plot
-    cf = ax[1].contourf(lon, arr2[lat_name2], data, levels=levs, cmap='coolwarm', transform=ccrs.PlateCarree())
-    
-    # Add features
-    ax[1].coastlines()
-    #ax.add_feature(cfeature.BORDERS, linewidth=0.5)
-    ax[1].gridlines(draw_labels=True)
-    ax[1].set_title(f"{varname} in {dset_name2}")
-    
-    # Add colorbar and labels
-    cb = plt.colorbar(cf, orientation='horizontal', pad=0.05, aspect=50)
-    
-    
-    plt.tight_layout()
-    
-    # Save figure if path is provided
-    if save_plot.strip() != "":
-        plt.savefig(save_plot, bbox_inches='tight')
-    
-    plt.show()
-    
+        
+        # Filled contour plot
+        cf = ax[1].contourf(lon, arr2[lat_name2], data, levels=levs, cmap='coolwarm', transform=ccrs.PlateCarree())
+        
+        # Add features
+        ax[1].coastlines()
+        #ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+        ax[1].gridlines(draw_labels=True)
+        ax[1].set_title(f"{varname} in {dset_name2}")
+        
+        # Add colorbar and labels
+        cb = plt.colorbar(cf, orientation='horizontal', pad=0.05, aspect=50)
+        
+        
+        plt.tight_layout()
+        
+        # Save figure if path is provided
+        if save_plot.strip() != "":
+            plt.savefig(save_plot, bbox_inches='tight')
+        
+        plt.show()
+    else:
+
+        def tco319_coordinates(yvals, reduced_points):
+            lats = []
+            lons = []
+
+            for lat, nlon in zip(yvals, reduced_points):
+                lon = np.arange(nlon) * 360.0 / nlon
+
+                lats.extend(np.full(nlon, lat))
+                lons.extend(lon)
+
+            return np.asarray(lats), np.asarray(lons)
+
+        lat_name1 = None
+        lon_name1 = None
+
+        for possible_lat in ['latitude', 'lat']:
+            if possible_lat in arr1.coords:
+                lat_name1 = possible_lat
+                break
+
+
+        for possible_lon in ['longitude', 'lon']:
+            if possible_lon in arr1.coords:
+                lon_name1 = possible_lon
+                break
+
+        if lat_name1 is None or lon_name1 is None:
+            raise ValueError("Could not find valid latitude or level coordinates in DataArray.")
+            
+        
+        
+
+        fig, ax = plt.subplots(1, 2, figsize=(11, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+
+        #plt.subplots_adjust(left=0.2,right=0.5,bottom=0.4,top=0.5)
+        
+        lon = arr1[lon_name1].values.astype(np.float64)
+        
+        data = arr1.values
+        
+        vmin = np.nanmin(data)
+        vmax = np.nanmax(data)
+        levs = np.linspace(vmin, vmax, c_levs)
+        
+
+        
+        
+        # Filled contour plot
+        cf = ax[0].contourf(lon, arr1[lat_name1], data, levels=levs, cmap='coolwarm', transform=ccrs.PlateCarree())
+        
+        # Add features
+        ax[0].coastlines()
+        #ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+        ax[0].gridlines(draw_labels=True)
+        ax[0].set_title(f"{varname} in {dset_name1}")
+        
+        # Add colorbar and labels
+        cb = plt.colorbar(cf, orientation='horizontal', pad=0.05, aspect=50)
+        
+        
+        
+        if "rgrid" in arr2.dims:
+            # TCO/reduced Gaussian grid
+            lat, lon = tco319_coordinates(yvals, reduced_points)
+
+            data = arr.values
+
+            cf = ax[1].scatter(
+                lon,
+                lat,
+                c=data,
+                s=1,
+                cmap="coolwarm",
+                transform=ccrs.PlateCarree()
+            )
+        
+            # Add features
+            ax[1].coastlines()
+            #ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+            ax[1].gridlines(draw_labels=True)
+            ax[1].set_title(f"{varname} in {dset_name2}")
+            
+            # Add colorbar and labels
+            cb = plt.colorbar(cf, orientation='horizontal', pad=0.05, aspect=50)
+            
+            
+            plt.tight_layout()
+            
+            # Save figure if path is provided
+            if save_plot.strip() != "":
+                plt.savefig(save_plot, bbox_inches='tight')
+            
+            plt.show()
+        

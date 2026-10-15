@@ -6,6 +6,7 @@ exp="$1"  # First command-line argument
 inipath="$2"
 in_HPC="$3"
 
+
 if [ "$in_HPC" == "false" ]; then
    export CLEAN_ENV="env -i PATH=$PATH"
 fi
@@ -21,6 +22,9 @@ for i in "${!ifs_inp_str1[@]}"; do
     echo "filename: ${infile[$i]}"
 done
 
+
+
+
 var="q"
 
 echo "grib operations with: ${infile[1]} involving ${var}"
@@ -32,7 +36,7 @@ if [ "$in_HPC" == "false" ]; then
 else
     cdo setgridtype,regular temp_${var}.grib temp_${var}_r.grib
 fi
-    
+        
 grib_to_netcdf temp_${var}_r.grib -o temp_${var}_GG.nc
 
 
@@ -50,17 +54,16 @@ var_CL=("stl1" "ci" "al" "lai_lv" "lai_hv")
 
 for vr in "${var_GG[@]}"; do
 
-       grib_copy -w shortName=$vr "${infile[0]}" temp_${vr}.grib
-       
-       if [ "$in_HPC" == "false" ]; then
-           $CLEAN_ENV cdo setgridtype,regular temp_${vr}.grib temp_${vr}_r.grib
-       else
-           cdo setgridtype,regular temp_${vr}.grib temp_${vr}_r.grib
-       fi
-       grib_to_netcdf temp_${vr}_r.grib -o temp_${vr}_GG.nc
-       
-       rm temp_${vr}_r.grib
-    
+    grib_copy -w shortName=$vr "${infile[0]}" temp_${vr}.grib
+        
+    if [ "$in_HPC" == "false" ]; then
+        $CLEAN_ENV cdo setgridtype,regular temp_${vr}.grib temp_${vr}_r.grib
+    else
+        cdo setgridtype,regular temp_${vr}.grib temp_${vr}_r.grib
+    fi
+    grib_to_netcdf temp_${vr}_r.grib -o temp_${vr}_GG.nc
+        
+    rm temp_${vr}_r.grib
 done
 
 
@@ -68,20 +71,16 @@ done
 
 for vr in "${var_CL[@]}"; do
 
-      grib_copy -w shortName=$vr "${infile[3]}" temp_ICMCL_${vr}.grib
-       
-      if [ "$in_HPC" == "false" ]; then
-          $CLEAN_ENV cdo setgridtype,regular temp_ICMCL_${vr}.grib temp_ICMCL_${vr}_r.grib
-      else
-          cdo setgridtype,regular temp_ICMCL_${vr}.grib temp_ICMCL_${vr}_r.grib
-      fi       
-      grib_to_netcdf temp_ICMCL_${vr}_r.grib -o temp_ICMCL_${vr}_GG.nc
+    grib_copy -w shortName=$vr "${infile[3]}" temp_ICMCL_${vr}.grib
+        
+    if [ "$in_HPC" == "false" ]; then
+        $CLEAN_ENV cdo setgridtype,regular temp_ICMCL_${vr}.grib temp_ICMCL_${vr}_r.grib
+    else
+        cdo setgridtype,regular temp_ICMCL_${vr}.grib temp_ICMCL_${vr}_r.grib
+    fi       
+    grib_to_netcdf temp_ICMCL_${vr}_r.grib -o temp_ICMCL_${vr}_GG.nc
 
 done
-
-
-
-
 
 
 
