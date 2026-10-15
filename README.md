@@ -1,4 +1,4 @@
-# CLIO (CLimate model Input for OpenIFS)
+# CLIO (CLimate data Input for OpenIFS)
 CLIO rewrites initial condition files for the OpenIFS numerical weather prediction model maintained and developed by ECMWF (https://www.ecmwf.int/en/research/projects/openifs). CLIO is designed to supply meteorological data from CMIP6 models to OpenIFS, thus enabling OpenIFS simulations to be initialised with atmospheric states taken from any climate model (or even any weather or climate model or reanalysis). With CLIO the user can generate initial condition files with much higher horizontal and vertical resolution thanks to CLIO's interpolation routines.
 
 We recommend the user to use CLIO on HPC platforms. While CLIO was tested on traditional laptops, we expect slow runtime when other than TL159, TL255 or TL399 resolutions are chosen. The user is also recommended to run CLIO inside the container, which ensures smooth execution, since the user is not required to install any packages or deal with shared libraries. 
