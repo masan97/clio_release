@@ -26,7 +26,7 @@ To istall CLIO from this repository one requires git-lfs. Please follow the inst
 **Git**: to copy the "clio" repository to your local directory via Git using:
 ```
 cd your_local_directory
-git install lfs
+git lfs install
 git lfs pull
 git clone git@version.helsinki.fi:dynamic-meteo-common/clio_release.git
 cd clio_release
