@@ -28,7 +28,7 @@ To install CLIO from this repository one requires git-lfs. Please follow the ins
 cd your_local_directory
 git lfs install
 git lfs pull
-git clone git clone git@github.com:masan97/clio_release.git
+git clone git@github.com:masan97/clio_release.git
 cd clio_release
 git checkout newbranch
 ```
