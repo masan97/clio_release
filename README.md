@@ -1,5 +1,5 @@
 # CLIO (CLimate data Input for OpenIFS)
-CLIO rewrites initial condition files for the OpenIFS numerical weather prediction model maintained and developed by ECMWF (https://www.ecmwf.int/en/research/projects/openifs). CLIO is designed to supply meteorological data from CMIP6 models to OpenIFS, thus enabling OpenIFS simulations to be initialised with atmospheric states taken from any climate model (or even any weather or climate model or reanalysis). With CLIO the user can generate initial condition files with much higher horizontal and vertical resolution thanks to CLIO's interpolation routines.
+CLIO rewrites initial condition files for the OpenIFS numerical weather prediction model maintained and developed by ECMWF (https://www.ecmwf.int/en/research/projects/openifs). CLIO is designed to supply meteorological data from CMIP6 models to OpenIFS, thus enabling OpenIFS simulations to be initialised with atmospheric states taken from any climate model or reanalysis. With CLIO the user can generate initial condition files with much higher horizontal and vertical resolution thanks to CLIO's interpolation routines.
 
 We recommend the user to use CLIO on HPC platforms. While CLIO was tested on traditional laptops, we expect slow runtime when other than TL159, TL255 or TL399 resolutions are chosen. The user is also recommended to run CLIO inside the container, which ensures smooth execution, since the user is not required to install any packages or deal with shared libraries. 
 
@@ -16,19 +16,19 @@ Specifically, CLIO updates the following OpenIFS initial files:
 Such files with various horizontal and vertical resolutions can be obtained from https://doi.org/10.5281/zenodo.23364583. CLIO currently supports linear reduced grids (TL159, TL255, TL399, TL639 and TL1279) and cubic octahedral grids (TCo319, TCo639 and TCo1279). In this repository initial files for one resolution (TL399) are included.
 
 # Documentation
-This Git repository contains a pdf Documentation as an extension of this README.
+This Git repository contains a pdf Documentation (User_Manual.pdf) as an extension of this README.
 
 # Installation
 **Requirements and dependencies:**
 
-To istall CLIO from this repository one requires git-lfs. Please follow the installation instructions at https://git-lfs.com/. In our HPC system git-lfs can be loaded as a module.
+To install CLIO from this repository one requires git-lfs. Please follow the installation instructions at https://git-lfs.com/. In our HPC system git-lfs can be loaded as a module.
 
 **Git**: to copy the "clio" repository to your local directory via Git using:
 ```
 cd your_local_directory
 git lfs install
 git lfs pull
-git clone git@github.com:masan97/clio_release.git
+git clone git@version.helsinki.fi:dynamic-meteo-common/clio_release.git
 cd clio_release
 git checkout newbranch
 ```
@@ -79,8 +79,14 @@ cd ../app
 python3 CLIO_start.py
 ```
 
+**Running CLIO on a laptop with singularity**
 
-Namelist inside CLIO_start.py:
+Before running CLIO inside the container on a laptop, the user should have Apptainer configured. The installation guide of Apptainer is available here: https://apptainer.org/docs/admin/main/installation.html#installation-on-linux .
+
+When Apptainer is installed, first run CLIO in test mode (see Section 7.1 in the user manual) to ensure that the software works properly.
+
+
+**Namelist inside CLIO_start.py**
 
 | **Name of the parameter:** | **Type:**      | **Description:**                                                                                   |
 |----------------------------|----------------|---------------------------------------------------------------------------------------------------|
@@ -88,7 +94,7 @@ Namelist inside CLIO_start.py:
 | expname                    | string    | 4-digit experiment name of the OpenIFS initial files (e.g. from ICMSHabt3INIT abt3 will be the expname)  |
 | IFS_path                   | string    | The directory containing the OpenIFS initial files to be updated                      |
 | grid_type                  | string    | TL1279 or TL639 or TL399 or TL255 or TL159 or TCo319 or TCo639 or TCo1279             |
-| cmip_path                  | string    | Path to your input data, below this the following directories sholb be present: model/variant_lab/date_yr data|
+| cmip_path                  | string    | Path to your input data, below this the following directories should be present: model/variant_lab/date_yr data|
 | model                      | string    | standard name of the CMIP6 model (e.g. EC-Earth3)                                     |
 | variant_lab                | string    | The variant label (i.e. the ensemble member) of the CMIP6 input data.                 |
 | exp_cmip                   | string    | The CMIP6 experiment type (e.g. historical                                            |
@@ -109,9 +115,61 @@ Namelist inside CLIO_start.py:
 | update_CL                  | boolian   | set to True when you want to update the 2d variables in the ICMCLxxxxINIT file                 |
 
 
+# Example launch of CLIO using the container on a laptop
+
+Once Apptainer is configured, we launch CLIO's test module first:
+
+```shell
+cd /home/$USERNAME/Documents/dev/clio/clio_release/container
+singularity shell --bind /home/$USERNAME/Documents/dev/clio/clio_release,/home/$USERNAME/Downloads/CMIP6 ./clio-image.simg
+cd ../app
+python3 CLIO_test.py /home/$USERNAME/Documents/dev/clio/clio_release/ true
+```
+
+Once we see the following message on the screen, we can launch CLIO:
+
+```shell
+Tests passed: 16 out of 16
+++++++++++++++++++++++++++++++++
+++++  CLIO testing finished ++++
+++++++++++++++++++++++++++++++++
+```
+
+Our example config python dictionary looks like the following:
+
+```shell
+config = {
+    "workdir": "/home/$USERNAME/Documents/dev/clio/clio_release/app/",
+    "expname": "abzf",
+    "IFS_path": "/home/$USERNAME/Documents/dev/clio/clio_release/INPUT_GRIB/TL399/",
+    "grid_type": "TL399",
+    "cmip_path": "/home/$USERNAME/Downloads/CMIP6/EC-Earth3/r1i1p1f1/1996/",
+    "model": "EC-Earth3",
+    "variant_lab": "r1i1p1f1",
+    "exp_cmip": "historical",
+    "date_yr": "1996",
+    "date_mo": "12",
+    "date_dd": "02",
+    "date_hr": "12",
+    "fcast_length":"15",
+    "if_CMIP_in_IFS_model_level":True,
+    "use_linear_hybrid2hybrid":False,
+    "ML_input":  "/home/$USERNAME/Downloads/CMIP6/def_ini_cond/aux/L137_model_levels.csv",
+    "ML_input_sep": ",",
+    "in_HPC":"true",
+    "ERA5_source":False,
+    "update_SH":True,
+    "update_GG":True,
+    "update_UA":True,
+    "update_CL":True
+}
+```
+
+In this set-up we generate all four OpenIFS initial condition files with TL399 spectral resolution (spectral, 3D upper-air, and 2 surface  files) whose fields are updated with CMIP6 data (from the date of 1996-12-02T12:00:00) from source directory `/home/$USERNAME/Downloads/CMIP6/EC-Earth3/r1i1p1f1/1996/`. Since we supply EC-Earth3 data on 91 model levels, equivalent to OpenIFS's L91 levels, we turn off vertical interpolation by setting `if_CMIP_in_IFS_model_level` to `True`. The four OpenIFS initial files are saved into `/home/$USERNAME/Documents/dev/clio/clio_release/INPUT_GRIB/TL399/`. Note that CLIO updates the already existing initial files inside `IFS_path` with CMIP6 data and saves these files by adding 'mod' to the existing file names.
+
 
 # Disclaimer
-The CLIO package is developed by Sandor Istvan Maho (sandor.maho@helsinki.fi) and Clement Bouvier (clement.bouvier@helsinki.fi). Further members of the development team: Victoria Siclair and Oskari Rantala (oskari.rantala@helsinki.fi).
+The CLIO package is developed by Sandor Istvan Maho (sandor.maho@helsinki.fi) and Clement Bouvier (clement.bouvier@helsinki.fi). Further members of the development team: Victoria Sinclair and Oskari Rantala (oskari.rantala@helsinki.fi).
 
 # Support
 For feedback and issue reporting, feel free to send an email to sandor.maho@helsinki.fi.
@@ -136,6 +194,5 @@ If you use the CLIO package in your research or publications, please cite using 
 </Details>
 
 # Acknowledgments
-We thank Lauri Tuppi for assisting us coding the vertical interpolation routines. We acknowledge ECMWF for providing us initial files for running OpenIFS, which we also included in CLIO's repository. Small segments of the source code was generated with GPT-4 and GPT-5 released by OpenAI. We acknowledge
-CSC – IT Centre for Science, Finland, for computational resources. This research is a contribution to the project `Future predictability of hazardous weather in Europe and in the Arctic' funded by the Research Council of Finland.
+We thank Lauri Tuppi for assisting us coding the vertical interpolation routines. We acknowledge ECMWF for providing us initial files for running OpenIFS, which we also included in CLIO's repository. Small segments of the source code was generated with GPT-4 and GPT-5 released by OpenAI. We acknowledge CSC – IT Centre for Science, Finland, for computational resources. This research is a contribution to the project `Future predictability of hazardous weather in Europe and in the Arctic' funded by the Research Council of Finland (grant number 364665).
 
